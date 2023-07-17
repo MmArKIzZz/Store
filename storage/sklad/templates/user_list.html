@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список пользователей</title>
+</head>
+<body>
+    <h1>Список пользователей</h1>
+    <a href="{% url 'storage' %}">Перейти к списку продуктов</a>
+    {% if user.is_superuser %}
+        <a href="{% url 'user_create' %}">Добавить пользователя</a>
+    {% endif %}
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>E-mail</th>
+            <th>Группы</th>
+            <th>Действия</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% for group in user.groups.all %}
+                        {{ group.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'user_edit' user.id %}">Редактировать</a>
+                        <a href="{% url 'user_delete' user.id %}">Удалить</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% load group_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Склад</title>
+</head>
+<body>
+    <h1>Склад</h1>
+    <a href="{% url 'user_list' %}">Перейти к списку пользователей</a>
+
+    {% if products %}
+        <ul>
+        {% for product in products %}
+            <li>
+                {{ product.name }} - {{ product.amount }}
+
+                {% if user.is_superuser or user|has_group:'View All Orders' %}
+                    <form method="post" action="{% url 'update_product' product.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="amount" value="{{ product.amount }}" required>
+                        <input type="text" name="name" value="{{ product.name }}" required>
+                        <input type="submit" value="Изменить">
+                    </form>
+                    <form method="post" action="{% url 'delete_product' product.id %}">
+                        {% csrf_token %}
+                        <input type="submit" value="Удалить">
+                    </form>
+                {% endif %}
+
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Нет товаров на складе</p>
+    {% endif %}
+
+    {% if user.is_superuser or user|has_group:'View All Orders' %}
+        <form method="post" action="{% url 'add_product' %}">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Название товара" required>
+            <input type="number" name="amount" placeholder="Количество" required>
+            <input type="submit" value="Добавить товар">
+        </form>
+    {% endif %}
+
+</body>
+</html>

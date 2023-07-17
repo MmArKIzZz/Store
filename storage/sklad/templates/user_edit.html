@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Редактирование пользователя</title>
+</head>
+<body>
+    {% if user.is_superuser %}
+    <h1>Редактирование пользователя</h1>
+
+<form method="post" action="{% url 'user_edit' user.id %}">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" name="username" value="{{ user.username }}" required><br>
+    <label for="password">Password:</label>
+    <input type="password" name="password" required><br>
+    <label for="email">Email:</label>
+    <input type="email" name="email" value="{{ user.email }}"><br>  <!-- Убран атрибут required -->
+    <label for="groups">Groups:</label>
+    <select name="groups" multiple>
+        {% for group in groups %}
+            <option value="{{ group.id }}" {% if group in user.groups.all %}selected{% endif %}>{{ group.name }}</option>
+        {% endfor %}
+    </select><br>
+    <input type="submit" value="Сохранить">
+</form>
+    {% else %}
+        <p>Access Denied. Only superusers can edit users.</p>
+    {% endif %}
+</body>
+</html>
